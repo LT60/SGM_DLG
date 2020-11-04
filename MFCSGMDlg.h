@@ -48,4 +48,5 @@ public:
 	afx_msg void OnBnClickedButtonSerach();
 	afx_msg void OnBnClickedButtonDelete();
 	CDateTimeCtrl m_databirthday;
+	afx_msg void OnMenuSaveTheFile();
 };

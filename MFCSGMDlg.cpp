@@ -84,6 +84,7 @@ BEGIN_MESSAGE_MAP(CMFCSGMDlg, CDialogEx)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_BUTTON_SERACH, &CMFCSGMDlg::OnBnClickedButtonSerach)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, &CMFCSGMDlg::OnBnClickedButtonDelete)
+	ON_COMMAND(ID_MENU_SAVE_THE_FILE, &CMFCSGMDlg::OnMenuSaveTheFile)
 END_MESSAGE_MAP()
 
 
@@ -405,7 +406,7 @@ void CMFCSGMDlg::OnBnClickedButtonChange()
 
 
 // 封装：从对话框的edit框填入的内容获取cstring，填入p指向的空间【对数据域进行写入】
-void CMFCSGMDlg::FillANodeFromDlg(LinkList node)
+void CMFCSGMDlg::FillANodeFromDlg(LinkList node)//从edit控件填入
 {
 	// TODO: 在此处添加实现代码.
 
@@ -561,4 +562,141 @@ void CMFCSGMDlg::OnBnClickedButtonDelete()
 	pdeleteDlg->Create(IDD_DIALOG_DELETE, this);
 	pdeleteDlg->ShowWindow(SW_SHOW);
 	
+}
+
+
+void CMFCSGMDlg::OnMenuSaveTheFile()
+{
+	// TODO: 在此添加命令处理程序代码
+	//参考资料：https://blog.csdn.net/weixin_43935474/article/details/87006800
+	CString filename = _T("学生成绩单.txt");
+	CString strWriteData;
+	//strWriteData.Format(_T("测试中文，testenglish，测 试 空 格\n测试回车\t测试tab"));
+	//标准化打开文件
+	CStdioFile csFile;
+	//cfException不知道有什么用，open的第四个参数用到了它，但是有默认null了
+	//CFileException cfException;
+	//CStdioFile属于mfc类
+	//参考资料：https://docs.microsoft.com/zh-cn/cpp/mfc/reference/cstdiofile-class?view=msvc-160
+	if (csFile.Open(filename, CFile::typeText | CFile::modeCreate | CFile::modeReadWrite /*| CFile::modeNoTruncate*//*, &cfException*/))
+		//以txt方式读取|若没有文件则创建该文件|文件打开时清除！
+	{
+		//csFile.SeekToEnd();
+		setlocale(LC_CTYPE, "chs");//为了能用WriteString()写入中文
+		csFile.WriteString(strWriteData);
+		//下面的数据都转化成CString仅仅是因为没有时间研究CStdioFile的其它写入函数了
+		/*
+	outFile //输出列标头部(各个元素名称)
+		<< "序号"
+		<< "    学号    "
+		<< "\t " << "姓名"
+		<< "\t " << "性别"
+		<< "\t " << "班级"
+		<< "\t " << "语文成绩"
+		<< "\t " << "高数成绩"
+		<< "\t " << "英语成绩"
+		<< "\t " << "计科成绩"
+		<< "\t " << "体育成绩"
+		<< "\t " << "生日"
+		<< std::endl;
+
+	LinkList p = head;
+	p = head->next;
+	while (p != NULL)//按顺序输出各个节点内的数据
+	{
+		outFile
+			<< p->student.num
+			<< p->student.ID
+			<< "\t " << p->student.Name
+			<< "\t ";
+		if (p->student.Sex == 1)
+		{
+			outFile << "男";
+		}
+		else
+		{
+			outFile << "女";
+		}
+		outFile
+			<< "\t %s" << p->student.Class.GetString()
+			<< "\t " << p->student.Chinese
+			<< "\t " << p->student.Math
+			<< "\t " << p->student.Ehglish
+			<< "\t " << p->student.P_E_
+			<< "\t " << p->student.Birthday
+			<< "\n ";
+		p = p->next;
+	}*///自己写的输出文件的代码但是不能输出中文
+	
+		//自己写的开始写入内容：
+		strWriteData.Format( //输出列标头部(各个元素名称)
+			_T("序号  \
+	学号\t\
+	姓名\
+	性别\
+	班级\t\
+	语文成绩\
+	高数成绩\
+	英语成绩\
+	体育成绩\
+	生日\
+	\n"));
+		//哈哈，句尾斜杠，会把代码的缩进也当作空格输出去
+		csFile.WriteString(strWriteData);
+		LinkList p = head;
+		p = head->next;
+		/*		while (p != NULL)//按顺序输出各个节点内的数据
+		{
+			//strWriteData.Format(_T(" h"));
+			//csFile.Write("%d", p->student.num);//int形的序号
+			//csFile.Write("%llu", p->student.ID);//unsignedlonglongint型的id
+			csFile.WriteString(p->student.Name);//CString型的name
+			if (p->student.Sex == 1)
+			{
+				csFile.WriteString(_T("男"));
+			}
+			else
+			{
+				csFile.WriteString(_T("女"));
+			}
+			csFile.WriteString(p->student.Class);
+			//csFile.Write("%d", p->student.Chinese);
+			//csFile.Write("%d", p->student.Math);
+			//csFile.Write("%d", p->student.Ehglish);
+			//csFile.Write("%d", p->student.P_E_);
+			csFile.WriteString(p->student.Birthday);
+			p = p->next;
+			//csFile.WriteString(strWriteData);
+		}
+*/
+		while (p!=NULL)
+		{
+			strWriteData.Format(_T("%d\t"),p->student.num);
+			csFile.WriteString(strWriteData);
+			strWriteData.Format(_T("%llu\t"), p->student.ID);
+			csFile.WriteString(strWriteData);
+			csFile.WriteString(p->student.Name);
+			if (p->student.Sex == 1)
+				strWriteData.Format(_T("\t男\t"));
+			else
+				strWriteData.Format(_T("\t女\t"));
+			csFile.WriteString(strWriteData);
+			csFile.WriteString(p->student.Class);
+			strWriteData.Format(_T("\t%d\t"), p->student.Chinese);
+			csFile.WriteString(strWriteData);
+			strWriteData.Format(_T("%d\t"), p->student.Math);
+			csFile.WriteString(strWriteData);
+			strWriteData.Format(_T("%d\t"), p->student.Ehglish);
+			csFile.WriteString(strWriteData);
+			strWriteData.Format(_T("%d\t"), p->student.P_E_);
+			csFile.WriteString(strWriteData);
+			csFile.WriteString(p->student.Birthday);
+
+			strWriteData.Format(_T("\n"));
+			p = p->next;
+			csFile.WriteString(strWriteData);
+		}
+		csFile.Close();
+
+	}
 }
