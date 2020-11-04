@@ -49,4 +49,6 @@ public:
 	afx_msg void OnBnClickedButtonDelete();
 	CDateTimeCtrl m_databirthday;
 	afx_msg void OnMenuSaveTheFile();
+	// 将整个链表的数据输出到strFile路径/文件名下
+	bool FilePrint(LinkList head, CString strFile);
 };

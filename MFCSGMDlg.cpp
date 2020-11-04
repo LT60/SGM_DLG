@@ -568,8 +568,16 @@ void CMFCSGMDlg::OnBnClickedButtonDelete()
 void CMFCSGMDlg::OnMenuSaveTheFile()
 {
 	// TODO: 在此添加命令处理程序代码
+	//todo：弹出窗口叫输入文件名？
+	FilePrint(head, _T("学生成绩单.txt"));
+}
+
+// 将整个链表的数据输出到strFile路径/文件名下
+bool CMFCSGMDlg::FilePrint(LinkList head, CString strFile)
+{
+	// TODO: 在此处添加实现代码.
 	//参考资料：https://blog.csdn.net/weixin_43935474/article/details/87006800
-	CString filename = _T("学生成绩单.txt");
+	//CString filename = _T("学生成绩单.txt");
 	CString strWriteData;
 	//strWriteData.Format(_T("测试中文，testenglish，测 试 空 格\n测试回车\t测试tab"));
 	//标准化打开文件
@@ -578,7 +586,7 @@ void CMFCSGMDlg::OnMenuSaveTheFile()
 	//CFileException cfException;
 	//CStdioFile属于mfc类
 	//参考资料：https://docs.microsoft.com/zh-cn/cpp/mfc/reference/cstdiofile-class?view=msvc-160
-	if (csFile.Open(filename, CFile::typeText | CFile::modeCreate | CFile::modeReadWrite /*| CFile::modeNoTruncate*//*, &cfException*/))
+	if (csFile.Open(strFile, CFile::typeText | CFile::modeCreate | CFile::modeReadWrite /*| CFile::modeNoTruncate*//*, &cfException*/))
 		//以txt方式读取|若没有文件则创建该文件|文件打开时清除！
 	{
 		//csFile.SeekToEnd();
@@ -627,8 +635,8 @@ void CMFCSGMDlg::OnMenuSaveTheFile()
 			<< "\n ";
 		p = p->next;
 	}*///自己写的输出文件的代码但是不能输出中文
-	
-		//自己写的开始写入内容：
+
+	//自己写的开始写入内容：
 		strWriteData.Format( //输出列标头部(各个元素名称)
 			_T("序号  \
 	学号\t\
@@ -669,9 +677,9 @@ void CMFCSGMDlg::OnMenuSaveTheFile()
 			//csFile.WriteString(strWriteData);
 		}
 */
-		while (p!=NULL)
+		while (p != NULL)
 		{
-			strWriteData.Format(_T("%d\t"),p->student.num);
+			strWriteData.Format(_T("%d\t"), p->student.num);
 			csFile.WriteString(strWriteData);
 			strWriteData.Format(_T("%llu\t"), p->student.ID);
 			csFile.WriteString(strWriteData);
@@ -697,6 +705,11 @@ void CMFCSGMDlg::OnMenuSaveTheFile()
 			csFile.WriteString(strWriteData);
 		}
 		csFile.Close();
-
+		return true;
 	}
+	else
+	{
+	//todo：弹出窗口示意文件打开错误！
+	}
+	return false;
 }
