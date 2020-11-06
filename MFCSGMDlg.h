@@ -50,5 +50,12 @@ public:
 	CDateTimeCtrl m_databirthday;
 	afx_msg void OnMenuSaveTheFile();
 	// 将整个链表的数据输出到strFile路径/文件名下
-	bool FilePrint(LinkList head, CString strFile);
+	bool FileSave(LinkList head, CString strFile);
+	afx_msg void OnMenuOpenOneFile();
+	// 打开窗口，另存为窗口。返回选中文件路径
+	CString getFilePath(bool isRead);
+	// 将strData填入node的第iWitchData个数据内
+	void fillANodeFromTXT(LinkList node, CString strData, int iWhichData);
+	// 保留头指针和尾指针，将整个链表释放掉
+	void freeAList(LinkList head, LinkList tail);
 };

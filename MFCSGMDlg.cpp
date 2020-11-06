@@ -85,6 +85,7 @@ BEGIN_MESSAGE_MAP(CMFCSGMDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SERACH, &CMFCSGMDlg::OnBnClickedButtonSerach)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, &CMFCSGMDlg::OnBnClickedButtonDelete)
 	ON_COMMAND(ID_MENU_SAVE_THE_FILE, &CMFCSGMDlg::OnMenuSaveTheFile)
+	ON_COMMAND(ID_MENU_OPEN_ONE_FILE, &CMFCSGMDlg::OnMenuOpenOneFile)
 END_MESSAGE_MAP()
 
 
@@ -569,11 +570,126 @@ void CMFCSGMDlg::OnMenuSaveTheFile()
 {
 	// TODO: 在此添加命令处理程序代码
 	//todo：弹出窗口叫输入文件名？
-	FilePrint(head, _T("学生成绩单.txt"));
+	FileSave(head, _T("学生成绩单.txt"));
 }
 
+
+void CMFCSGMDlg::OnMenuOpenOneFile()
+{
+	// TODO: 在此添加命令处理程序代码、
+	// # 定位文件并正确打开文件：
+	CString filePath = getFilePath(1);
+	SetDlgItemText(GetDlgItem(IDC_EDIT_ID)->GetDlgCtrlID(), filePath);
+	//定位文件位置（没有错误检查）
+	//参考资料：http://www.manongjc.com/article/42955.html
+	CStdioFile file;
+	file.Open(filePath, CFile::typeText|CFile::modeRead);//定义文件的只读模式
+	//默认文件打开成功
+
+	// # 建立一个新的数据链表
+	//删除原数据链空间
+	freeAList(head, tail);
+
+	//申请新数据链空间
+	head = (LinkList)malloc(sizeof(struct Node));
+	//head = (LinkList)new Node;
+	if (head != NULL)//空间申请成功
+	{
+		head->before = head;
+		head->next = NULL;
+		tail = head;
+		head->student.num = 0;
+		ptempfromlistctl = head;
+	}
+	else//空间申请失败
+	{
+		//printf("创建头节点时申请空间失败！\n");
+		//todo:弹窗！
+	}
+
+	//下面通过打开文件来填充这个数据链：
+	//准备工作：
+	file.Seek(0, CFile::begin);					//从文件的开头移动0字节
+	CString strData;
+	//https://blog.csdn.net/zollll/article/details/54861253?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.add_param_isCf&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.add_param_isCf
+	//important!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	setlocale(LC_CTYPE, "chs");//为了能用ReadString()写入中文!!
+	//important!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	file.ReadString(strData);//先把第一行读了，因为是表头，不要。
+	//ReadString后，文件指针？会自动移动到下一行。再次调用此函数就读的下一行了
+	CString tempText;
+	int iPos = -1; 
+
+	//开始填充：
+	while (file.ReadString(strData))//读取一行，给strData
+	{
+		//【申请一个节点】
+		PNode node = new(Node);
+
+		//【指针域修改】
+		node->next = NULL;							
+		node->before = tail;	//后插法
+		tail->next = node;
+		tail = node;
+
+		//【赋值数据域】
+		int studentDataOf = 0;		//0代表序号，1代表id，以此类推
+		while ((iPos = strData.Find('\t')) != -1)//找到一个制表符
+		{
+			tempText = strData.Left(iPos);//把制表符前的字符串给tempText
+			//调用一个函数把tempText赋值给一个数据节点。
+			fillANodeFromTXT(node, tempText, studentDataOf);
+			studentDataOf++;
+			strData.Delete(0, iPos+1);			//删除头部数据
+			//删除空格:
+			/*while ((iPos = strData.Find(' ')) == -1)
+			{
+				//函数:int Delete(int nIndex,int nCount = 1);返回值是被删除前的字符串的长度，nIndex是第一个被删除的字符索引，nCount是删除几个字符。当nCount过大，没有足够的字符删除时，此函数不执行。
+				strData.Delete(0, 1);//删除一个从位置0开始的字符
+			}*/
+		}
+	}
+	
+	
+
+
+
+	/*		while (file.ReadString(strData))
+		//将一行数据读取到strData中，如果读到该字符长度为0，则返回0。
+	{
+		CStringArray strArray;					//用来存放拆分出来的字符串
+		int iPos = -1;							//定义一个游标
+		//注意每行的第一个字符必须是数据，不能是空格！
+		while ((iPos = strData.Find(' ')) != -1)	//找到一个空格
+			//CString::Find返回此CString对象中与需要的子字符串或字符匹配的第一个字符的从零开始的索引；如果没有找到子字符串或字符则返回-1。
+		{
+			strArray.Add(strData.Left(iPos));	//填充入strArray
+			strData.Delete(0, iPos);			//删除头部数据
+			//todo：删除空格
+			while ((iPos = strData.Find(' ')) == -1)
+			{
+				// int  Delete( int nIndex, int nCount = 1);返回值是被删除前的字符串的长度，nIndex是第一个被删除的字符索引，nCount是一次删除几个字符。当nCount过大，没有足够的字符删除时，此函数不执行。
+				strData.Delete(0, 1);
+			}
+		}
+
+		SetDlgItemText(GetDlgItem(IDC_STATIC_ORDER)->GetDlgCtrlID(), strArray[0]);
+		SetDlgItemText(GetDlgItem(IDC_EDIT_ID)->GetDlgCtrlID(), strArray[1]);
+	}
+*/
+	ShowOnScreen(head);
+}
+
+
+//if (filePath != _T("0"))
+
+
+
+
+
+
 // 将整个链表的数据输出到strFile路径/文件名下
-bool CMFCSGMDlg::FilePrint(LinkList head, CString strFile)
+bool CMFCSGMDlg::FileSave(LinkList head, CString strFile)
 {
 	// TODO: 在此处添加实现代码.
 	//参考资料：https://blog.csdn.net/weixin_43935474/article/details/87006800
@@ -690,7 +806,7 @@ bool CMFCSGMDlg::FilePrint(LinkList head, CString strFile)
 				strWriteData.Format(_T("\t女\t"));
 			csFile.WriteString(strWriteData);
 			csFile.WriteString(p->student.Class);
-			strWriteData.Format(_T("\t%d\t"), p->student.Chinese);
+			strWriteData.Format(_T(" \t%d\t"), p->student.Chinese);
 			csFile.WriteString(strWriteData);
 			strWriteData.Format(_T("%d\t"), p->student.Math);
 			csFile.WriteString(strWriteData);
@@ -699,6 +815,8 @@ bool CMFCSGMDlg::FilePrint(LinkList head, CString strFile)
 			strWriteData.Format(_T("%d\t"), p->student.P_E_);
 			csFile.WriteString(strWriteData);
 			csFile.WriteString(p->student.Birthday);
+			strWriteData.Format(_T(" \t"));
+			csFile.WriteString(strWriteData);
 
 			strWriteData.Format(_T("\n"));
 			p = p->next;
@@ -712,4 +830,86 @@ bool CMFCSGMDlg::FilePrint(LinkList head, CString strFile)
 	//todo：弹出窗口示意文件打开错误！
 	}
 	return false;
+}
+
+
+
+// 打开窗口，另存为窗口。返回选中文件路径
+CString CMFCSGMDlg::getFilePath(bool isRead)
+{
+	// TODO: 在此处添加实现代码.
+	CString filter = L"文件(*.txt;*.)|*.txt;*.||";
+	CString fileName = L"成绩单";
+	CFileDialog openFile(isRead, _T("txt"), fileName, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, filter, this);
+	if (IDOK == openFile.DoModal())
+	{
+		return openFile.GetPathName();
+	}
+
+}
+
+
+// 将strData填入node的第iWitchData个数据内
+void CMFCSGMDlg::fillANodeFromTXT(LinkList node, CString strData, int iWhichData)
+{
+	// TODO: 在此处添加实现代码.
+	switch (iWhichData+1)
+	{
+	case 1://num
+		int num;
+		num = _ttoi(strData);
+		node->student.num = num;
+		break;
+	case 2://id
+		unsigned long long int id;
+		id = _tcstoull(strData, 0, 10);
+		node->student.ID = id;
+		break;
+	case 3://name
+		node->student.Name = strData;
+		break;
+	case 4://sex
+		if (strData==L"男")
+		{
+			node->student.Sex = 1;
+		}
+		else
+		{
+			node->student.Sex = 0;
+		}
+		break;
+	case 5://class
+		node->student.Class = strData;
+		break;
+	case 6://Chinese
+		node->student.Chinese = _ttoi(strData);
+		break;
+	case 7://Math
+		node->student.Math = _ttoi(strData);
+		break;
+	case 8://English
+		node->student.Ehglish = _ttoi(strData);
+		break;
+	case 9://P.E.
+		node->student.P_E_ = _ttoi(strData);
+		break;
+	case 10://birthday
+		node->student.Birthday = strData;
+		break;
+	default:
+		break;
+	}
+}
+
+
+// 保留头指针和尾指针，将整个链表释放掉
+void CMFCSGMDlg::freeAList(LinkList head, LinkList tail)
+{
+	// TODO: 在此处添加实现代码.
+	LinkList p;
+	while (head!=tail)
+	{
+		p = tail->before;
+		free(p);
+	}
 }
