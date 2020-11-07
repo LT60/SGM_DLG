@@ -117,14 +117,17 @@
 #define ID_MENU_SAVE_THE_FILE           32815
 #define ID_MENU_SAVE_SELF_FILE          32817
 #define ID_MENU_OPEN_ONE_FILE           32818
+#define ID_32819                        32819
+#define ID_32820                        32820
+#define ID_LT60                         32821
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        141
-#define _APS_NEXT_COMMAND_VALUE         32819
-#define _APS_NEXT_CONTROL_VALUE         1072
+#define _APS_NEXT_COMMAND_VALUE         32822
+#define _APS_NEXT_CONTROL_VALUE         1073
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

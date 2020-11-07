@@ -37,7 +37,7 @@ protected:
 public:
 	afx_msg void OnBnClickedButtonSave();
 	CListCtrl m_stlistct;
-	void ShowOnScreen(LinkList head);
+	bool ShowOnScreen(LinkList head);
 	//afx_msg void OnLvnItemchangedListScreen(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedButtonChange();
 	// 封装：从对话框的edit框填入的内容获取cstring，填入p指向的空间
@@ -50,12 +50,15 @@ public:
 	CDateTimeCtrl m_databirthday;
 	afx_msg void OnMenuSaveTheFile();
 	// 将整个链表的数据输出到strFile路径/文件名下
-	bool FileSave(LinkList head, CString strFile);
+	bool FileSave(LinkList head, CString strFilePath);
 	afx_msg void OnMenuOpenOneFile();
 	// 打开窗口，另存为窗口。返回选中文件路径
 	CString getFilePath(bool isRead);
 	// 将strData填入node的第iWitchData个数据内
 	void fillANodeFromTXT(LinkList node, CString strData, int iWhichData);
 	// 保留头指针和尾指针，将整个链表释放掉
-	void freeAList(LinkList head, LinkList tail);
+	void freeAList(LinkList head);
+	afx_msg void OnMenuCreateNewFile();
+	afx_msg void OnMenuSaveSelfFile();
+	afx_msg void OnLt60();
 };

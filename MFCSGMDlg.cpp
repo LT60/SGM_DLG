@@ -86,6 +86,9 @@ BEGIN_MESSAGE_MAP(CMFCSGMDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, &CMFCSGMDlg::OnBnClickedButtonDelete)
 	ON_COMMAND(ID_MENU_SAVE_THE_FILE, &CMFCSGMDlg::OnMenuSaveTheFile)
 	ON_COMMAND(ID_MENU_OPEN_ONE_FILE, &CMFCSGMDlg::OnMenuOpenOneFile)
+	ON_COMMAND(ID_MENU_CREATE_NEW_FILE, &CMFCSGMDlg::OnMenuCreateNewFile)
+	ON_COMMAND(ID_MENU_SAVE_SELF_FILE, &CMFCSGMDlg::OnMenuSaveSelfFile)
+	ON_COMMAND(ID_LT60, &CMFCSGMDlg::OnLt60)
 END_MESSAGE_MAP()
 
 
@@ -316,10 +319,15 @@ m_stlistct.SetItemText(2, 2, L"1980");
 
 */
 
-void CMFCSGMDlg::ShowOnScreen(LinkList head)
+//如果show了一个空的链表，就返回0，否则1
+bool CMFCSGMDlg::ShowOnScreen(LinkList head)
 {
 	// TODO: 在此处添加实现代码.
 	m_stlistct.DeleteAllItems();
+	if (tail->student.num==0)
+	{
+		return 0;
+	}
 	CString tempText = _T("LT60");//以后的初始化CString就这个啦！
 	LinkList p = head;
 	p = p->next;
@@ -364,7 +372,7 @@ void CMFCSGMDlg::ShowOnScreen(LinkList head)
 		i++;
 
 	}
-	
+	return 1;
 }
 
 /*
@@ -481,7 +489,24 @@ void CMFCSGMDlg::OnClickListScreen(NMHDR* pNMHDR, LRESULT* pResult)
 	tempText.Format(_T("%llu"), ptempfromlistctl->student.ID);	//学号
 	SetDlgItemText(IDC_EDIT_ID, tempText);
 	SetDlgItemText(IDC_COMBO_CLASS, ptempfromlistctl->student.Class);//班级
-	SetDlgItemText(IDC_DATETIMEPICKER_BIRTHDAY, ptempfromlistctl->student.Birthday);//生日
+	//生日
+	COleDateTime mySetData;
+	int Cdate[3] = { 1,1,1 };
+	CString strDay = ptempfromlistctl->student.Birthday;
+	for (int i = 0; i < 2; i++)
+	{
+		int iPos = 0;
+		iPos = strDay.Find('/');
+		CString tempText;
+		tempText = strDay.Left(iPos);
+		Cdate[i] = _ttoi(tempText);
+		strDay.Delete(0, iPos + 1);
+	}
+	//第三个数据，结尾没有‘/’所以单独赋值：
+	Cdate[2] = _ttoi(strDay);
+	mySetData.SetDate(Cdate[0], Cdate[1], Cdate[2]);
+	m_databirthday.SetTime(mySetData);
+
 	//成绩：
 	tempText.Format(_T("%d"), ptempfromlistctl->student.Chinese);//CHINESE
 	SetDlgItemText(IDC_EDIT_CHINESE, tempText);
@@ -588,7 +613,7 @@ void CMFCSGMDlg::OnMenuOpenOneFile()
 
 	// # 建立一个新的数据链表
 	//删除原数据链空间
-	freeAList(head, tail);
+	freeAList(head);
 
 	//申请新数据链空间
 	head = (LinkList)malloc(sizeof(struct Node));
@@ -689,7 +714,7 @@ void CMFCSGMDlg::OnMenuOpenOneFile()
 
 
 // 将整个链表的数据输出到strFile路径/文件名下
-bool CMFCSGMDlg::FileSave(LinkList head, CString strFile)
+bool CMFCSGMDlg::FileSave(LinkList head, CString strFilePath)
 {
 	// TODO: 在此处添加实现代码.
 	//参考资料：https://blog.csdn.net/weixin_43935474/article/details/87006800
@@ -702,57 +727,14 @@ bool CMFCSGMDlg::FileSave(LinkList head, CString strFile)
 	//CFileException cfException;
 	//CStdioFile属于mfc类
 	//参考资料：https://docs.microsoft.com/zh-cn/cpp/mfc/reference/cstdiofile-class?view=msvc-160
-	if (csFile.Open(strFile, CFile::typeText | CFile::modeCreate | CFile::modeReadWrite /*| CFile::modeNoTruncate*//*, &cfException*/))
+	if (csFile.Open(strFilePath, CFile::typeText | CFile::modeCreate | CFile::modeReadWrite /*| CFile::modeNoTruncate*//*, &cfException*/))
 		//以txt方式读取|若没有文件则创建该文件|文件打开时清除！
 	{
 		//csFile.SeekToEnd();
 		setlocale(LC_CTYPE, "chs");//为了能用WriteString()写入中文
 		csFile.WriteString(strWriteData);
 		//下面的数据都转化成CString仅仅是因为没有时间研究CStdioFile的其它写入函数了
-		/*
-	outFile //输出列标头部(各个元素名称)
-		<< "序号"
-		<< "    学号    "
-		<< "\t " << "姓名"
-		<< "\t " << "性别"
-		<< "\t " << "班级"
-		<< "\t " << "语文成绩"
-		<< "\t " << "高数成绩"
-		<< "\t " << "英语成绩"
-		<< "\t " << "计科成绩"
-		<< "\t " << "体育成绩"
-		<< "\t " << "生日"
-		<< std::endl;
 
-	LinkList p = head;
-	p = head->next;
-	while (p != NULL)//按顺序输出各个节点内的数据
-	{
-		outFile
-			<< p->student.num
-			<< p->student.ID
-			<< "\t " << p->student.Name
-			<< "\t ";
-		if (p->student.Sex == 1)
-		{
-			outFile << "男";
-		}
-		else
-		{
-			outFile << "女";
-		}
-		outFile
-			<< "\t %s" << p->student.Class.GetString()
-			<< "\t " << p->student.Chinese
-			<< "\t " << p->student.Math
-			<< "\t " << p->student.Ehglish
-			<< "\t " << p->student.P_E_
-			<< "\t " << p->student.Birthday
-			<< "\n ";
-		p = p->next;
-	}*///自己写的输出文件的代码但是不能输出中文
-
-	//自己写的开始写入内容：
 		strWriteData.Format( //输出列标头部(各个元素名称)
 			_T("序号  \
 	学号\t\
@@ -769,30 +751,7 @@ bool CMFCSGMDlg::FileSave(LinkList head, CString strFile)
 		csFile.WriteString(strWriteData);
 		LinkList p = head;
 		p = head->next;
-		/*		while (p != NULL)//按顺序输出各个节点内的数据
-		{
-			//strWriteData.Format(_T(" h"));
-			//csFile.Write("%d", p->student.num);//int形的序号
-			//csFile.Write("%llu", p->student.ID);//unsignedlonglongint型的id
-			csFile.WriteString(p->student.Name);//CString型的name
-			if (p->student.Sex == 1)
-			{
-				csFile.WriteString(_T("男"));
-			}
-			else
-			{
-				csFile.WriteString(_T("女"));
-			}
-			csFile.WriteString(p->student.Class);
-			//csFile.Write("%d", p->student.Chinese);
-			//csFile.Write("%d", p->student.Math);
-			//csFile.Write("%d", p->student.Ehglish);
-			//csFile.Write("%d", p->student.P_E_);
-			csFile.WriteString(p->student.Birthday);
-			p = p->next;
-			//csFile.WriteString(strWriteData);
-		}
-*/
+		//要用mfc特有的文件类
 		while (p != NULL)
 		{
 			strWriteData.Format(_T("%d\t"), p->student.num);
@@ -827,9 +786,18 @@ bool CMFCSGMDlg::FileSave(LinkList head, CString strFile)
 	}
 	else
 	{
-	//todo：弹出窗口示意文件打开错误！
+		//todo：弹出窗口示意文件打开错误！
+		return false;
 	}
-	return false;
+}
+
+
+//新建（清除）
+void CMFCSGMDlg::OnMenuCreateNewFile()
+{
+	// TODO: 在此添加命令处理程序代码
+	freeAList(head);
+	ShowOnScreen(head);
 }
 
 
@@ -903,13 +871,33 @@ void CMFCSGMDlg::fillANodeFromTXT(LinkList node, CString strData, int iWhichData
 
 
 // 保留头指针和尾指针，将整个链表释放掉
-void CMFCSGMDlg::freeAList(LinkList head, LinkList tail)
+void CMFCSGMDlg::freeAList(LinkList head)
 {
 	// TODO: 在此处添加实现代码.
 	LinkList p;
-	while (head!=tail)
+	while (tail->student.num!=0)
 	{
 		p = tail->before;
-		free(p);
+		free(tail);
+		tail = p;
 	}
+}
+
+
+
+void CMFCSGMDlg::OnMenuSaveSelfFile()
+{
+	// TODO: 在此添加命令处理程序代码
+	//MessageBox(_T("开发中！请暂时使用保存功能"));
+	CString filePath = getFilePath(0);
+	FileSave(head, filePath);
+}
+
+
+void CMFCSGMDlg::OnLt60()
+{
+	// TODO: 在此添加命令处理程序代码
+	CAboutDlg* pDlg = new CAboutDlg;
+	pDlg->Create(IDD_ABOUTBOX, this);
+	pDlg->ShowWindow(SW_SHOW);
 }
