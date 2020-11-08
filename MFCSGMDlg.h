@@ -61,4 +61,12 @@ public:
 	afx_msg void OnMenuCreateNewFile();
 	afx_msg void OnMenuSaveSelfFile();
 	afx_msg void OnLt60();
+	// 是否打开数据文件，是则指向此文件，否则指向null。
+	CStdioFile* TheOpenedFile = NULL;
+	// 是否打开外部数据文件，是则1，否则0.
+	bool bIsOpenFile = 0;
+	// 保存是否改变打开的数据文件状态
+	bool isChangeFile = 0;
+	// 保存是否保存文件的状态，与isChangeFile状态一起用
+	bool isSaveFile = 0;
 };

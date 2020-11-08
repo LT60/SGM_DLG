@@ -172,6 +172,7 @@ bool SEARCH::FindShow(int innum, unsigned long long int inid, CString inname, CS
 {
 	// TODO: 在此处添加实现代码.
 	bool isfind = 0;
+	i = 0;	//显示行数的变量置为零
 	while (GetANode(innum, inid, inname, inclass, pnode) != NULL)
 	{
 		isfind = 1;
@@ -207,7 +208,7 @@ void SEARCH::ShowANode(LinkList pnode)
 		tempText.Format(_T("女"));
 	}
 	searchlistscreen.SetItemText(i, 2, tempText);			//显示性别
-	tempText.Format(_T("%llu"), pnode->student.ID);	/////////////todo
+	tempText.Format(_T("%llu"), pnode->student.ID);	
 	searchlistscreen.SetItemText(i, 3, tempText);			//显示学号
 	searchlistscreen.SetItemText(i, 4, pnode->student.Class);	//显示班级
 	tempText.Format(_T("%d"), pnode->student.Chinese);

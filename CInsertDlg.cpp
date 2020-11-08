@@ -9,7 +9,6 @@
 #include "MFCSGMDlg.h"
 
 bool IsAdd = 0;
-void ShowOnScreen(LinkList pnode);
 
 // CInsertDlg 对话框
 
@@ -177,6 +176,7 @@ void CInsertDlg::OnBnClickedButtonInsertok()
 	insertnode->before = pnode->before;
 	pnode->before->next = insertnode;
 	insertnode->next = pnode;
+	pnode->before = insertnode;
 	//3.修改后面的节点内的序号域：
 	while (pnode != NULL)//pnode变成头指针才退出循环
 	{
@@ -216,7 +216,7 @@ void CInsertDlg::ShowOnMainList(LinkList head)
 			tempText.Format(_T("女"));
 		}
 		m_mainlist->SetItemText(i, 2, tempText);			//显示性别
-		tempText.Format(_T("%llu"), p->student.ID);	/////////////to
+		tempText.Format(_T("%llu"), p->student.ID);
 		m_mainlist->SetItemText(i, 3, tempText);			//显示学号
 		m_mainlist->SetItemText(i, 4, p->student.Class);	//显示班级
 		tempText.Format(_T("%d"), p->student.Chinese);

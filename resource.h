@@ -8,6 +8,7 @@
 #define IDD_MFCSGM_DIALOG               102
 #define IDR_MAINFRAME                   128
 #define IDR_MENU1                       130
+#define IDR_MENU                        130
 #define IDD_DIALOG_INSERT               131
 #define IDD_DIALOG_SEARCH               133
 #define IDD_DIALOG_DELETE               139

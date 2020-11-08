@@ -235,89 +235,21 @@ HCURSOR CMFCSGMDlg::OnQueryDragIcon()
 void CMFCSGMDlg::OnBnClickedButtonSave()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	//Node node ;				//这样不行，因为每次的局部变量都有可能是同一个地址
+	//Node node ;				
+	//上面语句不行，因为每次的局部变量都有可能是同一个地址
 	//PNode p = &node;
 	PNode node = new(Node);
 
 	node->student.num = tail->student.num + 1;	//默认修改序号
 	FillANodeFromDlg(node);						//填充数据域
-	//CString tempText;
-	//tempText.Format(_T("%d"), node->student.num+1);//显示序号（+1）只要你
-	//SetDlgItemText(IDC_EDIT_ORDER, tempText);
+
 	node->next = NULL;							//【对指针域进行修改】
 	node->before = tail;
 	tail->next = node;//插入数据。
 	tail = node;
 
-
 	ShowOnScreen(head);
-	//todo:show in the list
-	//ShowOnList(head);//现在变成调用此函数出问题
 }
-
-
-//每一次调用此函数，从head中刷新list
-//不要问我为什么注释掉下面这一大段，问就是有问题，解决不了，重新整了一个
-/*void CMFCSGMDlg::ShowOnList(LinkList head)
-{
-	// TODO: 在此处添加实现代码.
-	LinkList p = head;
-	CString tempText = _T("lt60");
-	char* tempChar;
-	int i = 0;
-	while (p != NULL)
-	{
-		p = p->next;
-
-		m_stlistct.DeleteAllItems();
-		//tempText.Format(_T("%d"), p->student.num);//这句有问题
-		//_itot(p->student.num, tempChar, 3);
-		
-		m_stlistct.InsertItem(0, _T("aaaaa"));
-		m_stlistct.InsertItem(i,tempText);
-		tempText = p->student.Name;
-		m_stlistct.SetItemText(i, 1, tempText);
-		
-		i++;
-	}
-
-	/*m_stlistct.DeleteAllItems();
-	m_stlistct.InsertItem(0, tempText, 0);
-m_stlistct.SetItemText(0, 1, L"男");
-m_stlistct.SetItemText(0, 2, L"1992");
-m_stlistct.InsertItem(1, L"张三", 1);
-m_stlistct.SetItemText(1, 1, L"男");
-m_stlistct.SetItemText(1, 2, L"1987");
-m_stlistct.InsertItem(2, L"李四", 2);
-m_stlistct.SetItemText(2, 1, L"男");
-m_stlistct.SetItemText(2, 2, L"1980");
-
-
-	while (p->next!=NULL)
-	{
-		p = p->next;
-
-		//把节点里面的元素默认排列好，放在tempText里面
-		//tempText = _T("%d | ", p->student.num);
-		//tempText = _tcscat(&tempText,p.student.name);
-		/*tempText.Format(_T(" %4d | %s | "), p->student.num, p->student.Name);
-		if (p->student.Sex)
-		{
-			tempText.Format(_T(" 男 |"));
-		}
-		else
-		{
-			tempText.Format(_T(" 女 |"));
-		}
-		tempText.Format(_T(" %13d | %s | %s |"), p->student.ID,p->student.Class,p->student.Birthday);
-		tempText.Format(_T(" %3d | %3d | %3d | %3d |"), p->student.Chinese, p->student.Math, p->student.Ehglish, p->student.P_E_);
-
-		//把tempText内的内容显示到list里面
-		list->AddString(tempText);
-	}
-}
-
-*/
 
 //如果show了一个空的链表，就返回0，否则1
 bool CMFCSGMDlg::ShowOnScreen(LinkList head)
@@ -361,11 +293,6 @@ bool CMFCSGMDlg::ShowOnScreen(LinkList head)
 		tempText.Format(_T("%d"), p->student.P_E_);
 		m_stlistct.SetItemText(i, 8, tempText);			//显示体育成绩
 		m_stlistct.SetItemText(i, 9, p->student.Birthday);//显示生日
-
-		/*		tempText.Format(_T("%d"), i);
-		m_stlistct.SetItemText(i+1, 1, tempText);
-		*/
-
 		//m_stlistct.SetItemState(i, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);//默认选中显示的最后一行//但是好像没有什么显示效果
 
 		p = p->next;
@@ -375,42 +302,12 @@ bool CMFCSGMDlg::ShowOnScreen(LinkList head)
 	return 1;
 }
 
-/*
-void CMFCSGMDlg::OnLvnItemchangedListScreen(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	// TODO: 在此添加控件通知处理程序代码
-	
-
-
-
-
-	*pResult = 0;
-}
-
-*/
 
 void CMFCSGMDlg::OnBnClickedButtonChange()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	/*ptempfromlistctl = head->next;
-
-	int index;
-	for (index = 0; index < m_stlistct.GetItemCount(); index++)
-	{
-		if (m_stlistct.GetItemState(index, LVIS_SELECTED) == LVIS_SELECTED)
-		{
-			//str.Format(_T("选中了第%d行"), i);
-			//AfxMessageBox(str);
-			SetDlgItemText(IDC_STATIC_CLICK_SHOW, ptempfromlistctl->student.Name);
-			break;
-		}
-		ptempfromlistctl = ptempfromlistctl->next;
-	}//抄的获取选中行数//这里，index可以写到for里面*/
-
 	FillANodeFromDlg(ptempfromlistctl);//修改数据域就好
-
-	ShowOnScreen(head);//刷新
+	ShowOnScreen(head);
 }
 
 
@@ -611,6 +508,13 @@ void CMFCSGMDlg::OnMenuOpenOneFile()
 	file.Open(filePath, CFile::typeText|CFile::modeRead);//定义文件的只读模式
 	//默认文件打开成功
 
+	//TODO：以下情况需要操作：新建了文件没有保存，改变了文件而没有保存
+	//需要弹出提示对话框，询问是否保存，若新建文件需要保存，调用另存为窗口。若改变打开的文件需要保存，调用保存函数。
+	
+	//打开外部文件了，修改相应状态值：
+	TheOpenedFile = &file;
+	bIsOpenFile = 1;
+
 	// # 建立一个新的数据链表
 	//删除原数据链空间
 	freeAList(head);
@@ -666,51 +570,12 @@ void CMFCSGMDlg::OnMenuOpenOneFile()
 			fillANodeFromTXT(node, tempText, studentDataOf);
 			studentDataOf++;
 			strData.Delete(0, iPos+1);			//删除头部数据
-			//删除空格:
-			/*while ((iPos = strData.Find(' ')) == -1)
-			{
-				//函数:int Delete(int nIndex,int nCount = 1);返回值是被删除前的字符串的长度，nIndex是第一个被删除的字符索引，nCount是删除几个字符。当nCount过大，没有足够的字符删除时，此函数不执行。
-				strData.Delete(0, 1);//删除一个从位置0开始的字符
-			}*/
+			//函数:int Delete(int nIndex,int nCount = 1);返回值是被删除前的字符串的长度，nIndex是第一个被删除的字符索引，nCount是删除几个字符。当nCount过大，没有足够的字符删除时，此函数不执行。
 		}
 	}
 	
-	
-
-
-
-	/*		while (file.ReadString(strData))
-		//将一行数据读取到strData中，如果读到该字符长度为0，则返回0。
-	{
-		CStringArray strArray;					//用来存放拆分出来的字符串
-		int iPos = -1;							//定义一个游标
-		//注意每行的第一个字符必须是数据，不能是空格！
-		while ((iPos = strData.Find(' ')) != -1)	//找到一个空格
-			//CString::Find返回此CString对象中与需要的子字符串或字符匹配的第一个字符的从零开始的索引；如果没有找到子字符串或字符则返回-1。
-		{
-			strArray.Add(strData.Left(iPos));	//填充入strArray
-			strData.Delete(0, iPos);			//删除头部数据
-			//todo：删除空格
-			while ((iPos = strData.Find(' ')) == -1)
-			{
-				// int  Delete( int nIndex, int nCount = 1);返回值是被删除前的字符串的长度，nIndex是第一个被删除的字符索引，nCount是一次删除几个字符。当nCount过大，没有足够的字符删除时，此函数不执行。
-				strData.Delete(0, 1);
-			}
-		}
-
-		SetDlgItemText(GetDlgItem(IDC_STATIC_ORDER)->GetDlgCtrlID(), strArray[0]);
-		SetDlgItemText(GetDlgItem(IDC_EDIT_ID)->GetDlgCtrlID(), strArray[1]);
-	}
-*/
 	ShowOnScreen(head);
 }
-
-
-//if (filePath != _T("0"))
-
-
-
-
 
 
 // 将整个链表的数据输出到strFile路径/文件名下
@@ -720,10 +585,9 @@ bool CMFCSGMDlg::FileSave(LinkList head, CString strFilePath)
 	//参考资料：https://blog.csdn.net/weixin_43935474/article/details/87006800
 	//CString filename = _T("学生成绩单.txt");
 	CString strWriteData;
-	//strWriteData.Format(_T("测试中文，testenglish，测 试 空 格\n测试回车\t测试tab"));
 	//标准化打开文件
 	CStdioFile csFile;
-	//cfException不知道有什么用，open的第四个参数用到了它，但是有默认null了
+	//cfException用做异常处理，open的第四个参数用到了它，但是有默认null了
 	//CFileException cfException;
 	//CStdioFile属于mfc类
 	//参考资料：https://docs.microsoft.com/zh-cn/cpp/mfc/reference/cstdiofile-class?view=msvc-160
@@ -888,7 +752,6 @@ void CMFCSGMDlg::freeAList(LinkList head)
 void CMFCSGMDlg::OnMenuSaveSelfFile()
 {
 	// TODO: 在此添加命令处理程序代码
-	//MessageBox(_T("开发中！请暂时使用保存功能"));
 	CString filePath = getFilePath(0);
 	FileSave(head, filePath);
 }
