@@ -154,7 +154,7 @@ LinkList SEARCH::GetANode(int num, unsigned long long int id, CString name, CStr
 			return pnode;
 		}
 			  break;
-		case 4:if (pnode->student.Class=inclass)
+		case 4:if (pnode->student.Class==inclass)//有bug
 		{
 			return pnode;
 		}

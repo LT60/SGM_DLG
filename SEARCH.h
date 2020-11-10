@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿//SEARCH.h
+
+#pragma once
 
 #include"LinkList.h"
 // SEARCH 对话框

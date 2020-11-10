@@ -501,7 +501,7 @@ void CMFCSGMDlg::OnMenuOpenOneFile()
 	// TODO: 在此添加命令处理程序代码、
 	// # 定位文件并正确打开文件：
 	CString filePath = getFilePath(1);
-	SetDlgItemText(GetDlgItem(IDC_EDIT_ID)->GetDlgCtrlID(), filePath);
+	//SetDlgItemText(GetDlgItem(IDC_EDIT_ID)->GetDlgCtrlID(), filePath);
 	//定位文件位置（没有错误检查）
 	//参考资料：http://www.manongjc.com/article/42955.html
 	CStdioFile file;

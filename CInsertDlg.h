@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿//CInsertDlg.h
+
+#pragma once
 
 #include "LinkList.h"//??
 

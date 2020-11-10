@@ -1,4 +1,6 @@
-﻿
+﻿//MFCSGMDlg.h
+
+
 // MFCSGMDlg.h: 头文件
 //
 

@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿//CDELETE.h
+
+#pragma once
 #include "LinkList.h"
 
 // CDELETE 对话框
