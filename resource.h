@@ -1,6 +1,4 @@
-﻿//Resource.h
-
-//{{NO_DEPENDENCIES}}
+﻿//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ 生成的包含文件。
 // 供 MFCSGM.rc 使用
 //
