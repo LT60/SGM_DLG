@@ -52,18 +52,11 @@ public:
 			myOrder = myhead; 
 		}
 		//排序
+		//quick_sort(myhead, myhead->next, tail, order);
 		Commader(order);
 	}
 	~MenuDataOrder()//析构函数释放空间
 	{
-		LinkList p = mytail;
-		while (mytail->student.num != 0)
-		{
-			p = mytail->before;
-			free(mytail);
-			mytail = p;
-		}
-		free(myhead);
 	}
 
 public:
@@ -73,6 +66,7 @@ public:
 	
 private:
 	void Commader(int order);//还是要传参数是为了加强这个参数的重要性
+	void quick_sort(LinkList myhead, LinkList left, LinkList right, int order);
 	int getGrade(LinkList p, int order);
 	void  swap(LinkList a, LinkList b)
 	{

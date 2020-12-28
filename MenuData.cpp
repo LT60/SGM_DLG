@@ -10,6 +10,7 @@ void MenuDataOrder::Commader(int order)
 	while (p!=myhead->next)
 	{
 		LinkList q = myhead->next;
+		
 		while (q->next!=NULL)	//检查一下冒泡结束条件和冒泡算法是否一致
 		{
 			if ((order > 99 && order % 2 == 1)||(order<=99))//上百且是奇数或者没有上百
@@ -34,6 +35,42 @@ void MenuDataOrder::Commader(int order)
 		p = p->before;
 	}
 
+}
+
+
+//快速排序
+void MenuDataOrder::quick_sort(LinkList first, LinkList theleft, LinkList theright,int order)
+{
+	LinkList left = theleft, right = theright;
+	if (left->student.num<right->student.num)
+	{
+		LinkList flag = first;//将第一个数据作为中枢
+		while (left!=right)
+		{
+			while (getGrade(flag, order) <= getGrade(right, order) && left!=right) // 从右向左找第一个小于x的数
+				right = right->before;
+			if (left != right)
+			{
+				swap(flag, right);
+				flag = right;
+				left = left->next;
+			}
+			else break;
+
+			while (getGrade(left, order) <= getGrade(flag, order) && left != right) // 从左向右找第一个大于等于x的数
+				left = left->next;
+			if (left != right)
+			{
+				swap(left, flag);
+				flag = left;
+				right = right->before;
+			}
+			else break;
+		}
+		//?s[i] = x;
+		quick_sort(first, theleft, left->before,order); // 递归调用 
+		quick_sort(first, left->next, theright,order);
+	}
 }
 
 int MenuDataOrder::getGrade(LinkList p,int order)

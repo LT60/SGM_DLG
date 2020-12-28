@@ -48,7 +48,7 @@ BOOL CInsertDlg::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	CString tempText;
-	tempText.Format(_T("你选中了第%d个数据，请问是想在这个数据前面插入新的数据还是后面？"), pnode->student.num);
+	tempText.Format(_T("你选中了序号为%d的数据，请问是想在这个序号前面插入新的数据还是后面？"), pnode->student.num);
 	SetDlgItemText(GetDlgItem(IDC_STATIC)->GetDlgCtrlID(), tempText);
 
 	CheckRadioButton(IDC_RADIO_SEX_BOY, IDC_RADIO_SEX_GIRL, IDC_RADIO_SEX_BOY);//默认选中男性

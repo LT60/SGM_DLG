@@ -39,7 +39,7 @@ protected:
 public:
 	afx_msg void OnBnClickedButtonSave();
 	CListCtrl m_stlistct;
-	bool ShowOnScreen(LinkList head);
+	bool ShowOnScreen(LinkList head,LinkList orderhead);
 	//afx_msg void OnLvnItemchangedListScreen(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedButtonChange();
 	// 封装：从对话框的edit框填入的内容获取cstring，填入p指向的空间
@@ -83,4 +83,13 @@ public:
 	afx_msg void OnSumData();
 	afx_msg void OnAverageData();
 	afx_msg void OnStandardData();
+	void MakeOrderList();
+
+private:
+	LinkList head, tail, ptempfromlistctl;
+	int Order;
+	LinkList orderhead, ordertail;//todo
+	bool isOrdered = 0;
+	int timer = 1;
+
 };

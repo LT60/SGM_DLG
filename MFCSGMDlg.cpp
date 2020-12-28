@@ -19,14 +19,11 @@
 //数据操作头文件
 #include"MenuData.h"
 
+CInsertDlg* pDlg;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-LinkList head, tail, ptempfromlistctl;
-LinkList defaut, gradeorder;//todo
-CInsertDlg* pDlg;
-int timer = 1;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
@@ -266,12 +263,29 @@ void CMFCSGMDlg::OnBnClickedButtonSave()
 	tail->next = node;//插入数据。
 	tail = node;
 
-	ShowOnScreen(head);
+	if (isOrdered)
+	{
+		PNode node = new(Node);
+
+		node->student.num = tail->student.num + 1;	//默认修改序号
+		FillANodeFromDlg(node);						//填充数据域
+
+		node->next = NULL;							//【对指针域进行修改】
+		node->before = ordertail;
+		ordertail->next = node;//插入数据。
+		ordertail = node;
+	}
+	ShowOnScreen(head, orderhead);
 }
 
 //如果show了一个空的链表，就返回0，否则1
-bool CMFCSGMDlg::ShowOnScreen(LinkList head)
+bool CMFCSGMDlg::ShowOnScreen(LinkList defhead,LinkList orderhead)
 {
+	LinkList head = defhead;
+	if (isOrdered)
+	{
+		head = orderhead;
+	}
 	// TODO: 在此处添加实现代码.
 	m_stlistct.DeleteAllItems();
 	if (tail->student.num==0)
@@ -280,6 +294,10 @@ bool CMFCSGMDlg::ShowOnScreen(LinkList head)
 	}
 	CString tempText = _T("LT60");//以后的初始化CString就这个啦！
 	LinkList p = head;
+	if (isOrdered)
+	{
+		p = orderhead;
+	}
 	p = p->next;
 	int i = 0;
 
@@ -325,7 +343,19 @@ void CMFCSGMDlg::OnBnClickedButtonChange()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	FillANodeFromDlg(ptempfromlistctl);//修改数据域就好
-	ShowOnScreen(head);
+	if (isOrdered)
+	{
+		LinkList p = head->next;
+		while (p!=NULL)
+		{
+			if (p->student.num == ptempfromlistctl->student.num)
+			{
+				FillANodeFromDlg(p);
+			}
+			else p = p->next;
+		}
+	}
+	ShowOnScreen(head, orderhead);
 }
 
 
@@ -436,7 +466,7 @@ void CMFCSGMDlg::OnClickListScreen(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 
-void CMFCSGMDlg::OnBnClickedButtonInsert()
+void CMFCSGMDlg::OnBnClickedButtonInsert()//显示head而且orderhead失效
 {
 	// TODO: 在此添加控件通知处理程序代码
 	pDlg = new CInsertDlg;
@@ -450,7 +480,7 @@ void CMFCSGMDlg::OnBnClickedButtonInsert()
 		TimerOn = true;
 		SetTimer(timer, 100, NULL);//1:定时器标识，1000ms
 	}*/
-	
+	isOrdered = 0;
 }
 
 
@@ -472,12 +502,13 @@ void CMFCSGMDlg::OnTimer(UINT_PTR nIDEvent)
 		KillTimer(timer);
 		timer++;
 		TimerOn = false;
-		ShowOnScreen(head);
+		ShowOnScreen(head, orderhead);
 	}
 	timedigit++;
 	if (timedigit%7==4)
 	{
-		ShowOnScreen(head);//每隔7秒刷新
+		ShowOnScreen(head, orderhead);
+		//每隔7秒刷新
 		if (timedigit==20)
 		{
 			timedigit = 0;
@@ -511,12 +542,18 @@ void CMFCSGMDlg::OnMenuSaveTheFile()
 {
 	// TODO: 在此添加命令处理程序代码
 	//todo：弹出窗口叫输入文件名？
-	FileSave(head, _T("学生成绩单.txt"));
+	LinkList p = head;
+	if (isOrdered)
+	{
+		p = orderhead;
+	}
+	FileSave(p, _T("学生成绩单.txt"));
 }
 
 
 void CMFCSGMDlg::OnMenuOpenOneFile()
 {
+	isOrdered = 0;
 	// TODO: 在此添加命令处理程序代码、
 	// # 定位文件并正确打开文件：
 	CString filePath = getFilePath(1);
@@ -593,7 +630,7 @@ void CMFCSGMDlg::OnMenuOpenOneFile()
 		}
 	}
 	
-	ShowOnScreen(head);
+	ShowOnScreen(head, orderhead);
 }
 
 
@@ -632,9 +669,7 @@ bool CMFCSGMDlg::FileSave(LinkList head, CString strFilePath)
 	\n"));
 		//哈哈，句尾斜杠，会把代码的缩进也当作空格输出去
 		csFile.WriteString(strWriteData);
-		LinkList p = head;
-		p = head->next;
-		//要用mfc特有的文件类
+		LinkList p = head->next;
 		while (p != NULL)
 		{
 			strWriteData.Format(_T("%d\t"), p->student.num);
@@ -679,8 +714,9 @@ bool CMFCSGMDlg::FileSave(LinkList head, CString strFilePath)
 void CMFCSGMDlg::OnMenuCreateNewFile()
 {
 	// TODO: 在此添加命令处理程序代码
+	isOrdered = 0;
 	freeAList(head);
-	ShowOnScreen(head);
+	ShowOnScreen(head, orderhead);
 }
 
 
@@ -772,7 +808,12 @@ void CMFCSGMDlg::OnMenuSaveSelfFile()
 {
 	// TODO: 在此添加命令处理程序代码
 	CString filePath = getFilePath(0);
-	FileSave(head, filePath);
+	LinkList p = head;
+	if (isOrdered)
+	{
+		p = orderhead->next;
+	}
+	FileSave(p, filePath);
 }
 
 
@@ -788,84 +829,111 @@ void CMFCSGMDlg::OnLt60()
 void CMFCSGMDlg::MenuOrderShowData()
 {
 	// TODO: 在此添加命令处理程序代码
-	MenuDataOrder orderdata(head, tail,0);
-	ShowOnScreen(orderdata.myhead);
+	ShowOnScreen(head, orderhead);
+	isOrdered = 0;
 }
 
 //语文顺序
 void CMFCSGMDlg::MenuInOrderChinese()
 {
 	// TODO: 在此添加命令处理程序代码
-	MenuDataOrder orderdata(head, tail, 111);
-	ShowOnScreen(orderdata.myhead);
+	Order = 111;
+	MakeOrderList();
+	ShowOnScreen(head, orderhead);
 }
 
 //语文逆序
 void CMFCSGMDlg::OnChineseUnorder()
 {
-	MenuDataOrder orderdata(head, tail, 112);
-	ShowOnScreen(orderdata.myhead);
+	Order=112;
+	MakeOrderList();
+	ShowOnScreen(head, orderhead);
 }
 
 
 void CMFCSGMDlg::OnMathInOrder()
 {
-	MenuDataOrder orderdata(head, tail, 121);
-	ShowOnScreen(orderdata.myhead);
+	Order=121;
+	MakeOrderList();
+	ShowOnScreen(head, orderhead);
 }
 
 
 void CMFCSGMDlg::OnMathUnorder()
 {
-	MenuDataOrder orderdata(head, tail, 122);
-	ShowOnScreen(orderdata.myhead);
+	Order = 122;
+	MakeOrderList();
+	ShowOnScreen(head, orderhead);
 }
 
 
 void CMFCSGMDlg::OnEnglishInOrder()
 {
-	MenuDataOrder orderdata(head, tail, 131);
-	ShowOnScreen(orderdata.myhead);
+	Order = 131;
+	MakeOrderList();
+	ShowOnScreen(head, orderhead);
 }
 
 
 void CMFCSGMDlg::OnEnglishUnorder()
 {
-	MenuDataOrder orderdata(head, tail, 132);
-	ShowOnScreen(orderdata.myhead);
+	Order = 132;
+	MakeOrderList();
+	ShowOnScreen(head, orderhead);
 }
 
 
 void CMFCSGMDlg::OnPEInOrder()
 {
-	MenuDataOrder orderdata(head, tail, 141);
-	ShowOnScreen(orderdata.myhead);
+	Order = 141;
+	MakeOrderList();
+	ShowOnScreen(head, orderhead);
 }
 
 
 void CMFCSGMDlg::OnPEUnorder()
 {
-	MenuDataOrder orderdata(head, tail, 142);
-	ShowOnScreen(orderdata.myhead);
+	Order = 142;
+	MakeOrderList();
+	ShowOnScreen(head, orderhead);
 }
 
 
 void CMFCSGMDlg::OnSumData()
 {
-	MenuDataOrder orderdata(head, tail, 21);
-	ShowOnScreen(orderdata.myhead);
+	Order = 21;	MakeOrderList();
+	ShowOnScreen(head, orderhead);
 }
 
 
 void CMFCSGMDlg::OnAverageData()
 {
-	MenuDataOrder orderdata(head, tail, 22);
-	ShowOnScreen(orderdata.myhead);
+	Order = 22;	MakeOrderList();
+	ShowOnScreen(head, orderhead);
 }
 
 
 void CMFCSGMDlg::OnStandardData()
 {
-	MenuDataOrder orderdata(head, tail, 23);
-	ShowOnScreen(orderdata.myhead);
+	Order = 23;	MakeOrderList();
+	ShowOnScreen(head, orderhead);
+}
+
+void CMFCSGMDlg::MakeOrderList()
+{
+	if (isOrdered)//释放上一个空间
+	{
+		LinkList p = ordertail;
+		while (ordertail->student.num != 0)
+		{
+			p = ordertail->before;
+			free(ordertail);
+			ordertail = p;
+		}
+		free(orderhead);
+	}
+	MenuDataOrder orderdata(head, tail, Order);
+	orderhead = orderdata.myhead;
+	ordertail = orderdata.mytail;
+	isOrdered = 1;
 }
