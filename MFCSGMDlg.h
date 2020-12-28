@@ -71,4 +71,16 @@ public:
 	bool isChangeFile = 0;
 	// 保存是否保存文件的状态，与isChangeFile状态一起用
 	bool isSaveFile = 0;
+	afx_msg void MenuOrderShowData();
+	afx_msg void MenuInOrderChinese();
+	afx_msg void OnChineseUnorder();
+	afx_msg void OnMathInOrder();
+	afx_msg void OnMathUnorder();
+	afx_msg void OnEnglishInOrder();
+	afx_msg void OnEnglishUnorder();
+	afx_msg void OnPEInOrder();
+	afx_msg void OnPEUnorder();
+	afx_msg void OnSumData();
+	afx_msg void OnAverageData();
+	afx_msg void OnStandardData();
 };

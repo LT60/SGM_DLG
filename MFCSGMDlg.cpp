@@ -8,17 +8,23 @@
 #include "MFCSGMDlg.h"
 #include "afxdialogex.h"
 
+//数据结构头文件
 #include "LinkList.h"
 #include "CInsertDlg.h"
 #include "SEARCH.h"
 #include "CDELETE.h"
+
+//文件操作头文件
+
+//数据操作头文件
+#include"MenuData.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 LinkList head, tail, ptempfromlistctl;
-LinkList defaut, gradeup, gradedown;//todo
+LinkList defaut, gradeorder;//todo
 CInsertDlg* pDlg;
 int timer = 1;
 
@@ -89,6 +95,18 @@ BEGIN_MESSAGE_MAP(CMFCSGMDlg, CDialogEx)
 	ON_COMMAND(ID_MENU_CREATE_NEW_FILE, &CMFCSGMDlg::OnMenuCreateNewFile)
 	ON_COMMAND(ID_MENU_SAVE_SELF_FILE, &CMFCSGMDlg::OnMenuSaveSelfFile)
 	ON_COMMAND(ID_LT60, &CMFCSGMDlg::OnLt60)
+	ON_COMMAND(ID_32777, &CMFCSGMDlg::MenuOrderShowData)
+	ON_COMMAND(ID_32782, &CMFCSGMDlg::MenuInOrderChinese)
+	ON_COMMAND(ID_32783, &CMFCSGMDlg::OnChineseUnorder)
+	ON_COMMAND(ID_32787, &CMFCSGMDlg::OnMathInOrder)
+	ON_COMMAND(ID_32788, &CMFCSGMDlg::OnMathUnorder)
+	ON_COMMAND(ID_32789, &CMFCSGMDlg::OnEnglishInOrder)
+	ON_COMMAND(ID_32790, &CMFCSGMDlg::OnEnglishUnorder)
+	ON_COMMAND(ID_32791, &CMFCSGMDlg::OnPEInOrder)
+	ON_COMMAND(ID_32792, &CMFCSGMDlg::OnPEUnorder)
+	ON_COMMAND(ID_32794, &CMFCSGMDlg::OnSumData)
+	ON_COMMAND(ID_32795, &CMFCSGMDlg::OnAverageData)
+	ON_COMMAND(ID_32796, &CMFCSGMDlg::OnStandardData)
 END_MESSAGE_MAP()
 
 
@@ -480,6 +498,7 @@ void CMFCSGMDlg::OnBnClickedButtonDelete()
 	// TODO: 在此添加控件通知处理程序代码
 	CDELETE* pdeleteDlg = new CDELETE;
 	pdeleteDlg->head = head;
+	pdeleteDlg->thetail = &tail;
 	pdeleteDlg->m_mainlist = &m_stlistct;
 	pdeleteDlg->pnodedelete = ptempfromlistctl;
 	pdeleteDlg->Create(IDD_DIALOG_DELETE, this);
@@ -763,4 +782,90 @@ void CMFCSGMDlg::OnLt60()
 	CAboutDlg* pDlg = new CAboutDlg;
 	pDlg->Create(IDD_ABOUTBOX, this);
 	pDlg->ShowWindow(SW_SHOW);
+}
+
+//菜单顺序显示数据
+void CMFCSGMDlg::MenuOrderShowData()
+{
+	// TODO: 在此添加命令处理程序代码
+	MenuDataOrder orderdata(head, tail,0);
+	ShowOnScreen(orderdata.myhead);
+}
+
+//语文顺序
+void CMFCSGMDlg::MenuInOrderChinese()
+{
+	// TODO: 在此添加命令处理程序代码
+	MenuDataOrder orderdata(head, tail, 111);
+	ShowOnScreen(orderdata.myhead);
+}
+
+//语文逆序
+void CMFCSGMDlg::OnChineseUnorder()
+{
+	MenuDataOrder orderdata(head, tail, 112);
+	ShowOnScreen(orderdata.myhead);
+}
+
+
+void CMFCSGMDlg::OnMathInOrder()
+{
+	MenuDataOrder orderdata(head, tail, 121);
+	ShowOnScreen(orderdata.myhead);
+}
+
+
+void CMFCSGMDlg::OnMathUnorder()
+{
+	MenuDataOrder orderdata(head, tail, 122);
+	ShowOnScreen(orderdata.myhead);
+}
+
+
+void CMFCSGMDlg::OnEnglishInOrder()
+{
+	MenuDataOrder orderdata(head, tail, 131);
+	ShowOnScreen(orderdata.myhead);
+}
+
+
+void CMFCSGMDlg::OnEnglishUnorder()
+{
+	MenuDataOrder orderdata(head, tail, 132);
+	ShowOnScreen(orderdata.myhead);
+}
+
+
+void CMFCSGMDlg::OnPEInOrder()
+{
+	MenuDataOrder orderdata(head, tail, 141);
+	ShowOnScreen(orderdata.myhead);
+}
+
+
+void CMFCSGMDlg::OnPEUnorder()
+{
+	MenuDataOrder orderdata(head, tail, 142);
+	ShowOnScreen(orderdata.myhead);
+}
+
+
+void CMFCSGMDlg::OnSumData()
+{
+	MenuDataOrder orderdata(head, tail, 21);
+	ShowOnScreen(orderdata.myhead);
+}
+
+
+void CMFCSGMDlg::OnAverageData()
+{
+	MenuDataOrder orderdata(head, tail, 22);
+	ShowOnScreen(orderdata.myhead);
+}
+
+
+void CMFCSGMDlg::OnStandardData()
+{
+	MenuDataOrder orderdata(head, tail, 23);
+	ShowOnScreen(orderdata.myhead);
 }

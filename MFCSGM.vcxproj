@@ -187,6 +187,7 @@
     <ClInclude Include="CInsertDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="LinkList.h" />
+    <ClInclude Include="MenuData.h" />
     <ClInclude Include="MFCSGM.h" />
     <ClInclude Include="MFCSGMDlg.h" />
     <ClInclude Include="pch.h" />
@@ -197,6 +198,7 @@
   <ItemGroup>
     <ClCompile Include="CDELETE.cpp" />
     <ClCompile Include="CInsertDlg.cpp" />
+    <ClCompile Include="MenuData.cpp" />
     <ClCompile Include="MFCSGM.cpp" />
     <ClCompile Include="MFCSGMDlg.cpp" />
     <ClCompile Include="pch.cpp">
@@ -214,7 +216,6 @@
     <None Include="res\MFCSGM.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\bitmap1.bmp" />
     <Image Include="res\MFCSGM.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

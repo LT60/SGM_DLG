@@ -25,6 +25,7 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	LinkList pnodedelete, head;
+	LinkList* thetail;
 	CListCtrl* m_mainlist;
 	afx_msg void OnBnClickedButtonDeleteok();
 	afx_msg void OnBnClickedCancel();

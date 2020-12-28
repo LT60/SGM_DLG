@@ -78,13 +78,20 @@ void CDELETE::OnBnClickedButtonDeleteok()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	pnodedelete->before->next = pnodedelete->next;
-	pnodedelete->next->before = pnodedelete->before;
-	LinkList p = pnodedelete->next;
-	delete pnodedelete;
-	while (p!=NULL)
+	if (pnodedelete->next==NULL)
 	{
-		p->student.num--;
-		p = p->next;
+		*thetail = pnodedelete->before;
+	}
+	else
+	{
+		pnodedelete->next->before = pnodedelete->before;
+		LinkList p = pnodedelete->next;
+		delete pnodedelete;
+		while (p != NULL)
+		{
+			p->student.num--;
+			p = p->next;
+		}
 	}
 	ShowOnMainList(head);
 	CDialogEx::OnOK();
